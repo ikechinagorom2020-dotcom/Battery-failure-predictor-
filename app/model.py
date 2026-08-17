@@ -2,26 +2,24 @@ import torch.nn as nn
 
 
 class BatteryFailureNet(nn.Module):
-    """
-    Same architecture used in training (Cell 9 / Cell 20 of the notebook).
-    hidden_sizes and dropout are read from artifacts/feature_config.json
-    so this stays in sync with whatever configuration was trained.
-    """
-
-    def __init__(self, input_dim, hidden_sizes=(128, 64, 32), dropout=0.3):
+    def __init__(self, input_dim):
         super().__init__()
-        layers = []
-        prev = input_dim
-        for h in hidden_sizes:
-            layers += [
-                nn.Linear(prev, h),
-                nn.BatchNorm1d(h),
-                nn.ReLU(),
-                nn.Dropout(dropout),
-            ]
-            prev = h
-        layers.append(nn.Linear(prev, 1))
-        self.net = nn.Sequential(*layers)
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.BatchNorm1d(128),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+
+            nn.Linear(128, 64),
+            nn.BatchNorm1d(64),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+
+            nn.Linear(64, 32),
+            nn.ReLU(),
+
+            nn.Linear(32, 1)
+        )
 
     def forward(self, x):
         return self.net(x)

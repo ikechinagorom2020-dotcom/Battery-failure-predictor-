@@ -34,9 +34,7 @@ class Predictor:
         self.label_encoders = joblib.load(os.path.join(artifacts_dir, "label_encoders.pkl"))
 
         input_dim = len(self.num_cols) + len(self.cat_cols)
-        self.model = BatteryFailureNet(
-            input_dim=input_dim, hidden_sizes=self.hidden_sizes, dropout=self.dropout
-        )
+        self.model = BatteryFailureNet(input_dim=input_dim)
         state_dict = torch.load(
             os.path.join(artifacts_dir, "best_model.pt"), map_location="cpu"
         )
